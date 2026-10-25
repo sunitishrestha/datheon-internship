@@ -1,35 +1,28 @@
 # Our fake database (a dictionary) and simple functions to use it.
-# Data is lost when the server restarts - fine for learning!
+# Later (Task 3) you can replace this file with a real SQLite database.
 
 from typing import Optional, List
 
-from app.models.book import Book
+from app.core.security import hash_password
+from app.models.user import User
 
-books_db: dict[int, Book] = {}
-next_id = 1
-
-
-def get_all_books() -> List[Book]:
-    return list(books_db.values())
+# username -> User object
+users_db: dict[str, User] = {}
 
 
-def get_book_by_id(book_id: int) -> Optional[Book]:
-    return books_db.get(book_id)
+def get_user_by_username(username: str) -> Optional[User]:
+    return users_db.get(username)
 
 
-def add_book(data: dict) -> Book:
-    global next_id
-    book = Book(id=next_id, **data)
-    books_db[next_id] = book
-    next_id += 1
-    return book
+def get_all_users() -> List[User]:
+    return list(users_db.values())
 
 
-def replace_book(book_id: int, data: dict) -> Book:
-    book = Book(id=book_id, **data)
-    books_db[book_id] = book
-    return book
+def create_user(username: str, password: str, role: str = "user") -> User:
+    user = User(username=username, hashed_password=hash_password(password), role=role)
+    users_db[username] = user
+    return user
 
 
-def remove_book(book_id: int) -> None:
-    del books_db[book_id]
+# Create one admin account so we can test roles
+create_user("admin", "admin123", role="admin")

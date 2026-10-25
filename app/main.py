@@ -1,7 +1,5 @@
-from fastapi import FastAPI, HTTPException, status
-from pydantic import BaseModel, Field
-from typing import List, Optional
-import uvicorn
+from fastapi import FastAPI
+from app.routers import books, auth, users
 
 # Initialize FastAPI App
 app = FastAPI(
@@ -10,7 +8,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
+
 app.include_router(books.router)
+app.include_router(users.router)
+app.include_router(auth.router) 
 
 @app.get("/",include_in_schema=False)
 async def home():
